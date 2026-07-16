@@ -17,6 +17,7 @@ const MunchysGrillWebsite = () => {
   const [showLogoFallback, setShowLogoFallback] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [showInstallHelp, setShowInstallHelp] = useState(false);
+  const [showInstallNudge, setShowInstallNudge] = useState(false);
   const [isIos, setIsIos] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
@@ -41,6 +42,14 @@ const MunchysGrillWebsite = () => {
     setIsStandalone(standalone);
     setIsIos(/iphone|ipad|ipod/i.test(window.navigator.userAgent));
 
+    let showNudgeTimer;
+    let hideNudgeTimer;
+
+    if (!standalone && window.matchMedia('(max-width: 767px)').matches) {
+      showNudgeTimer = window.setTimeout(() => setShowInstallNudge(true), 1600);
+      hideNudgeTimer = window.setTimeout(() => setShowInstallNudge(false), 8600);
+    }
+
     const handleInstallPrompt = (event) => {
       event.preventDefault();
       setInstallPrompt(event);
@@ -49,6 +58,7 @@ const MunchysGrillWebsite = () => {
     const handleInstalled = () => {
       setInstallPrompt(null);
       setShowInstallHelp(false);
+      setShowInstallNudge(false);
       setIsStandalone(true);
     };
 
@@ -56,12 +66,16 @@ const MunchysGrillWebsite = () => {
     window.addEventListener('appinstalled', handleInstalled);
 
     return () => {
+      window.clearTimeout(showNudgeTimer);
+      window.clearTimeout(hideNudgeTimer);
       window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
       window.removeEventListener('appinstalled', handleInstalled);
     };
   }, []);
 
   const handleInstallClick = async () => {
+    setShowInstallNudge(false);
+
     if (!installPrompt) {
       setShowInstallHelp(true);
       return;
@@ -312,8 +326,8 @@ const MunchysGrillWebsite = () => {
         </div>
 
         <div className="relative container mx-auto px-4 pt-20 pb-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-80px)]">
-            <div className="text-white animate-slideInLeft">
+          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-80px)] min-w-0 w-full">
+            <div className="text-white animate-slideInLeft min-w-0 w-full">
               <div className="mb-4">
                 <span className="bg-gradient-to-r from-orange-400 to-emerald-500 text-black px-4 py-2 rounded-full font-bold text-sm animate-bounce-subtle">
                   🔥 EAT IN - TAKE OUT - DELIVERY
@@ -335,8 +349,8 @@ const MunchysGrillWebsite = () => {
                 Real Flavor</span> Real Kosher. Real Munch.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 animate-slideInUp">
-                <div className="w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row gap-3 animate-slideInUp items-center justify-center lg:justify-start w-full">
+                <div className="w-full max-w-sm sm:w-auto">
                   <button
                     onClick={() => window.open(TOAST_ORDER_URL, "_blank")}
                     className="w-full bg-emerald-600 text-white px-6 py-3 rounded-full font-bold text-lg hover:bg-emerald-700 transition-colors shadow-2xl hover:shadow-emerald-500/50 transform hover:scale-110"
@@ -344,7 +358,7 @@ const MunchysGrillWebsite = () => {
                     ORDER NOW
                   </button>
                 </div>
-                <div className="w-full sm:w-auto sm:max-w-xs">
+                <div className="w-full max-w-sm sm:w-auto sm:max-w-xs">
                   <button
                     onClick={() => window.open(DIRECTIONS_URL, "_blank")}
                     className="group w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-full font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all transform hover:scale-110 shadow-2xl hover:shadow-orange-500/50 flex items-center justify-center gap-1"
@@ -354,22 +368,13 @@ const MunchysGrillWebsite = () => {
                     <ChevronDown className="w-5 h-5 flex-shrink-0 group-hover:animate-bounce" />
                   </button>
                 </div>
-                {!isStandalone && (
-                  <button
-                    onClick={handleInstallClick}
-                    className="w-full sm:w-auto bg-white text-gray-900 px-6 py-3 rounded-full font-bold text-lg hover:bg-orange-50 transition-colors shadow-2xl flex items-center justify-center gap-2"
-                  >
-                    <Download className="w-5 h-5" />
-                    INSTALL APP
-                  </button>
-                )}
               </div>
             </div>
             
-            <div className="relative animate-slideInRight">
+            <div className="relative animate-slideInRight min-w-0 w-full">
               <div className="relative z-10 flex items-center justify-center">
                 <div className="relative">
-                  <div className="w-96 h-96 lg:w-[500px] lg:h-[500px] relative">
+                  <div className="w-[calc(100vw-2rem)] max-w-96 aspect-square lg:w-[500px] lg:max-w-none lg:h-[500px] relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-emerald-500/20 rounded-full animate-spin-slow"></div>
                     <div className="absolute inset-4 bg-gradient-to-br from-amber-400/30 to-emerald-500/30 rounded-full animate-spin-reverse"></div>
                     <div className="absolute inset-8 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 overflow-hidden group hover:scale-110 transition-transform duration-700">
@@ -506,7 +511,7 @@ const MunchysGrillWebsite = () => {
           >
             <div className="flex items-start justify-between gap-4 mb-5">
               <div>
-                <p className="text-sm font-bold text-orange-600 mb-1">FREE • NO APP STORE</p>
+                <p className="text-sm font-bold text-orange-600 mb-1">ADD TO HOME SCREEN</p>
                 <h2 id="install-title" className="text-2xl font-black text-gray-900">Add Munchy's to your phone</h2>
               </div>
               <button
@@ -778,6 +783,33 @@ const MunchysGrillWebsite = () => {
           </div>
         </div>
       </footer>
+
+      {showInstallNudge && !isStandalone && (
+        <div className="md:hidden fixed left-3 right-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-40 flex justify-center animate-slideInUp">
+          <div className="relative w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden">
+            <button
+              onClick={handleInstallClick}
+              className="w-full flex items-center gap-3 py-3 pl-3 pr-11 text-left"
+              aria-label="Add Munchy's Grill to your home screen"
+            >
+              <span className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
+                <Download className="w-5 h-5" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-black text-gray-900">Add Munchy's to your home screen</span>
+                <span className="block text-xs text-gray-500">Tap here for faster ordering next time</span>
+              </span>
+            </button>
+            <button
+              onClick={() => setShowInstallNudge(false)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full text-gray-400 hover:text-gray-700 flex items-center justify-center"
+              aria-label="Dismiss install suggestion"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-gray-950/95 backdrop-blur border-t border-white/10 px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-2xl">
         <div className="flex items-center gap-2 max-w-md mx-auto">
