@@ -1,0 +1,29 @@
+{
+  "id": "/",
+  "name": "Munchy's Grill",
+  "short_name": "Munchy's",
+  "description": "Browse Munchy's Grill and order online through Toast.",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "orientation": "any",
+  "categories": ["food", "shopping", "lifestyle"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "prefer_related_applications": false
+}

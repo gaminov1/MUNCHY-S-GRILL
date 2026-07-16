@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, MapPin, Clock, Phone, Mail, Facebook, Twitter, Instagram, Menu, X, Star, Award, Users, Utensils } from 'lucide-react';
+import { ChevronDown, MapPin, Phone, Facebook, Twitter, Instagram, Menu, X, Award, Users, Utensils, Download, Share2, PlusSquare } from 'lucide-react';
 
-import burgerImg from '/public/burger.png';
-import friesImg from '/public/Shawarma.png';
-import pizzaImg from '/public/Shawarma2.png';
-import saladImg from '/public/salad.png';
-import drinkImg from '/public/salad2.png';
-import logoImg from '/public/logo2.png';
-import vaadLogoImg from '/public/vaadlogo.png';
+const TOAST_ORDER_URL = 'https://order.toasttab.com/online/munchy-s-grill-12-irving-place';
+const DIRECTIONS_URL = 'https://www.google.com/maps/place/12+Irving+Pl,+Woodmere,+NY+11598,+USA';
+const burgerImg = '/burger.png';
+const friesImg = '/Shawarma.png';
+const pizzaImg = '/Shawarma2.png';
+const logoImg = '/logo2.png';
+const vaadLogoImg = '/vaadlogo.png';
 
 const MunchysGrillWebsite = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showHoursPopup, setShowHoursPopup] = useState(false);
-  const [showLogoFallback, setShowLogoFallback] = useState(false); // New state for logo fallback
+  const [showLogoFallback, setShowLogoFallback] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [showInstallHelp, setShowInstallHelp] = useState(false);
+  const [isIos, setIsIos] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 650);
 
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -32,12 +36,51 @@ const MunchysGrillWebsite = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    setIsStandalone(standalone);
+    setIsIos(/iphone|ipad|ipod/i.test(window.navigator.userAgent));
+
+    const handleInstallPrompt = (event) => {
+      event.preventDefault();
+      setInstallPrompt(event);
+    };
+
+    const handleInstalled = () => {
+      setInstallPrompt(null);
+      setShowInstallHelp(false);
+      setIsStandalone(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+    window.addEventListener('appinstalled', handleInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      window.removeEventListener('appinstalled', handleInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!installPrompt) {
+      setShowInstallHelp(true);
+      return;
+    }
+
+    await installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+
+    if (outcome === 'accepted') {
+      setInstallPrompt(null);
+    }
+  };
+
   const menuItems = [
     { name: 'CALL NOW', href: 'tel:5165953500' },
     { name: 'OUR STORY', href: '#story' },
-    { name: 'MENU', href: 'https://order.toasttab.com/online/munchy-s-grill-12-irving-place' },
+    { name: 'MENU', href: TOAST_ORDER_URL },
     { name: 'CATERING', href: '#catering' },
-    { name: 'LOCATIONS', href: 'https://www.google.com/maps/place/12+Irving+Pl,+Woodmere,+NY+11598,+USA' },
+    { name: 'LOCATIONS', href: DIRECTIONS_URL },
   ];
 
   const bestDishes = [
@@ -185,7 +228,7 @@ const MunchysGrillWebsite = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-24 md:pb-0 overflow-x-hidden">
       {/* Navigation */}
       <nav className={`fixed w-full z-40 transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'}`}>
         <div className="container mx-auto px-4">
@@ -227,6 +270,7 @@ const MunchysGrillWebsite = () => {
             <button
               className={`md:hidden ${isScrolled ? 'text-gray-800' : 'text-white'}`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -246,7 +290,7 @@ const MunchysGrillWebsite = () => {
                 </a>
               ))}
               <button
-                onClick={() => window.open("https://order.toasttab.com/online/munchy-s-grill-12-irving-place", "_blank")}
+                onClick={() => window.open(TOAST_ORDER_URL, "_blank")}
                 className="block w-full text-left px-3 py-2 text-gray-700 hover:text-emerald-500 font-semibold"
               >
                 ORDER NOW
@@ -294,7 +338,7 @@ const MunchysGrillWebsite = () => {
               <div className="flex flex-col sm:flex-row gap-3 animate-slideInUp">
                 <div className="w-full sm:w-auto">
                   <button
-                    onClick={() => window.open("https://order.toasttab.com/online/munchy-s-grill-12-irving-place", "_blank")}
+                    onClick={() => window.open(TOAST_ORDER_URL, "_blank")}
                     className="w-full bg-emerald-600 text-white px-6 py-3 rounded-full font-bold text-lg hover:bg-emerald-700 transition-colors shadow-2xl hover:shadow-emerald-500/50 transform hover:scale-110"
                   >
                     ORDER NOW
@@ -302,7 +346,7 @@ const MunchysGrillWebsite = () => {
                 </div>
                 <div className="w-full sm:w-auto sm:max-w-xs">
                   <button
-                    onClick={() => window.open("https://www.google.com/maps/place/12+Irving+Pl,+Woodmere,+NY+11598,+USA", "_blank")}
+                    onClick={() => window.open(DIRECTIONS_URL, "_blank")}
                     className="group w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-full font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all transform hover:scale-110 shadow-2xl hover:shadow-orange-500/50 flex items-center justify-center gap-1"
                   >
                     <MapPin className="w-5 h-5 flex-shrink-0" />
@@ -310,6 +354,15 @@ const MunchysGrillWebsite = () => {
                     <ChevronDown className="w-5 h-5 flex-shrink-0 group-hover:animate-bounce" />
                   </button>
                 </div>
+                {!isStandalone && (
+                  <button
+                    onClick={handleInstallClick}
+                    className="w-full sm:w-auto bg-white text-gray-900 px-6 py-3 rounded-full font-bold text-lg hover:bg-orange-50 transition-colors shadow-2xl flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-5 h-5" />
+                    INSTALL APP
+                  </button>
+                )}
               </div>
             </div>
             
@@ -439,6 +492,66 @@ const MunchysGrillWebsite = () => {
         </div>
       )}
 
+      {showInstallHelp && (
+        <div
+          className="fixed inset-0 bg-black/70 flex items-end sm:items-center justify-center z-50 p-3"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="install-title"
+          onClick={() => setShowInstallHelp(false)}
+        >
+          <div
+            className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <p className="text-sm font-bold text-orange-600 mb-1">FREE • NO APP STORE</p>
+                <h2 id="install-title" className="text-2xl font-black text-gray-900">Add Munchy's to your phone</h2>
+              </div>
+              <button
+                onClick={() => setShowInstallHelp(false)}
+                className="text-gray-500 hover:text-gray-800 p-1"
+                aria-label="Close install instructions"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {isIos ? (
+              <ol className="space-y-4 text-gray-700">
+                <li className="flex gap-3 items-center">
+                  <span className="w-9 h-9 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-black">1</span>
+                  <span className="flex-1">Tap the <strong>Share</strong> button in Safari.</span>
+                  <Share2 className="w-6 h-6 text-blue-600" />
+                </li>
+                <li className="flex gap-3 items-center">
+                  <span className="w-9 h-9 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-black">2</span>
+                  <span className="flex-1">Choose <strong>Add to Home Screen</strong>.</span>
+                  <PlusSquare className="w-6 h-6 text-gray-800" />
+                </li>
+                <li className="flex gap-3 items-center">
+                  <span className="w-9 h-9 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-black">3</span>
+                  <span className="flex-1">Tap <strong>Add</strong>. You're done.</span>
+                </li>
+              </ol>
+            ) : (
+              <div className="text-gray-700 space-y-3">
+                <p>Open your browser menu and choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p>
+                <p className="text-sm text-gray-500">Once installed, Munchy's opens from your home screen like any other app.</p>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowInstallHelp(false)}
+              className="mt-6 w-full bg-gray-900 text-white px-6 py-3 rounded-full font-bold"
+            >
+              GOT IT
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Promotions Section */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -512,7 +625,7 @@ const MunchysGrillWebsite = () => {
 
           <div className="text-center mt-12">
             <button
-              onClick={() => window.open("https://order.toasttab.com/online/munchy-s-grill-12-irving-place", "_blank")}
+              onClick={() => window.open(TOAST_ORDER_URL, "_blank")}
               className="bg-emerald-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-700 transition-colors"
             >
               SHOW ME THE MENU
@@ -666,7 +779,46 @@ const MunchysGrillWebsite = () => {
         </div>
       </footer>
 
-      <style jsx>{`
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-gray-950/95 backdrop-blur border-t border-white/10 px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-2xl">
+        <div className="flex items-center gap-2 max-w-md mx-auto">
+          <a
+            href="tel:5165953500"
+            className="w-12 h-12 rounded-2xl bg-white/10 text-white flex items-center justify-center"
+            aria-label="Call Munchy's Grill"
+          >
+            <Phone className="w-5 h-5" />
+          </a>
+          <a
+            href={TOAST_ORDER_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="flex-1 h-12 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black flex items-center justify-center tracking-wide"
+          >
+            ORDER ON TOAST
+          </a>
+          {!isStandalone ? (
+            <button
+              onClick={handleInstallClick}
+              className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center"
+              aria-label="Install Munchy's Grill app"
+            >
+              <Download className="w-5 h-5" />
+            </button>
+          ) : (
+            <a
+              href={DIRECTIONS_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center"
+              aria-label="Get directions to Munchy's Grill"
+            >
+              <MapPin className="w-5 h-5" />
+            </a>
+          )}
+        </div>
+      </div>
+
+      <style>{`
         @keyframes fadeInLeft {
           from {
             opacity: 0;
