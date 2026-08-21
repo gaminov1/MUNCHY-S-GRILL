@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Munchy's Grill",
+    "slug": "munchys-grill",
+    "scheme": "munchysgrill",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.munchysgrill.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.munchysgrill.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#111827",
+        "foregroundImage": "./assets/icon.png"
+      },
+      "predictiveBackGestureEnabled": true
+    },
+    "plugins": [
+      "expo-web-browser",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 220,
+          "resizeMode": "contain",
+          "backgroundColor": "#111827"
+        }
+      ]
+    ],
+    "extra": {
+      "apiBaseUrl": "https://www.munchysgrillny.com"
+    }
+  }
+}

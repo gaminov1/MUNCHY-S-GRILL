@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, MapPin, Phone, Facebook, Twitter, Instagram, Menu, X, Award, Users, Utensils, Download, Share2, PlusSquare } from 'lucide-react';
+import { ChevronDown, MapPin, Phone, Facebook, Twitter, Instagram, Menu, X, Award, Users, Utensils, Download, Share2, PlusSquare, Smartphone, BadgeCheck } from 'lucide-react';
 
 const TOAST_ORDER_URL = 'https://order.toasttab.com/online/munchy-s-grill-12-irving-place';
 const DIRECTIONS_URL = 'https://www.google.com/maps/place/12+Irving+Pl,+Woodmere,+NY+11598,+USA';
+const APP_STORE_URL = import.meta.env.VITE_APP_STORE_URL?.trim();
+const PLAY_STORE_URL = import.meta.env.VITE_PLAY_STORE_URL?.trim();
 const burgerImg = '/burger.png';
 const friesImg = '/Shawarma.png';
 const pizzaImg = '/Shawarma2.png';
@@ -75,6 +77,12 @@ const MunchysGrillWebsite = () => {
 
   const handleInstallClick = async () => {
     setShowInstallNudge(false);
+
+    const nativeStoreUrl = isIos ? APP_STORE_URL : PLAY_STORE_URL;
+    if (nativeStoreUrl) {
+      window.open(nativeStoreUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
 
     if (!installPrompt) {
       setShowInstallHelp(true);
@@ -731,6 +739,49 @@ const MunchysGrillWebsite = () => {
       </section>
 
       {/* Footer */}
+      <section className="relative overflow-hidden bg-gray-950 text-white py-20">
+        <div className="absolute -top-32 -right-20 w-96 h-96 rounded-full bg-emerald-600/20 blur-3xl"></div>
+        <div className="absolute -bottom-36 -left-20 w-96 h-96 rounded-full bg-orange-500/20 blur-3xl"></div>
+        <div className="relative container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 border border-emerald-400/30 bg-emerald-400/10 rounded-full px-4 py-2 mb-6">
+              <BadgeCheck className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-black tracking-[0.18em] text-emerald-300">THE OFFICIAL MUNCHY'S APP</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-5">Your next order,<br className="hidden sm:block" /> one tap away.</h2>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-9">
+              Browse the live menu, save your favorites, and check out securely through Toast on iPhone and Android.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              {APP_STORE_URL ? (
+                <a href={APP_STORE_URL} target="_blank" rel="noreferrer" className="w-full sm:w-auto min-w-60 bg-white text-gray-950 rounded-2xl px-6 py-4 flex items-center justify-center gap-3 hover:bg-orange-50 transition-colors">
+                  <span className="text-3xl leading-none"></span>
+                  <span className="text-left"><span className="block text-[10px] uppercase tracking-wider">Download on the</span><span className="block text-lg font-black leading-tight">App Store</span></span>
+                </a>
+              ) : (
+                <div className="w-full sm:w-auto min-w-60 border border-white/15 bg-white/5 rounded-2xl px-6 py-4 flex items-center justify-center gap-3">
+                  <span className="text-3xl leading-none text-gray-300"></span>
+                  <span className="text-left"><span className="block text-[10px] uppercase tracking-wider text-gray-400">iPhone app</span><span className="block text-lg font-black leading-tight">Coming soon</span></span>
+                </div>
+              )}
+
+              {PLAY_STORE_URL ? (
+                <a href={PLAY_STORE_URL} target="_blank" rel="noreferrer" className="w-full sm:w-auto min-w-60 bg-white text-gray-950 rounded-2xl px-6 py-4 flex items-center justify-center gap-3 hover:bg-orange-50 transition-colors">
+                  <Smartphone className="w-8 h-8" />
+                  <span className="text-left"><span className="block text-[10px] uppercase tracking-wider">Get it on</span><span className="block text-lg font-black leading-tight">Google Play</span></span>
+                </a>
+              ) : (
+                <div className="w-full sm:w-auto min-w-60 border border-white/15 bg-white/5 rounded-2xl px-6 py-4 flex items-center justify-center gap-3">
+                  <Smartphone className="w-8 h-8 text-gray-300" />
+                  <span className="text-left"><span className="block text-[10px] uppercase tracking-wider text-gray-400">Android app</span><span className="block text-lg font-black leading-tight">Coming soon</span></span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
@@ -796,7 +847,7 @@ const MunchysGrillWebsite = () => {
                 <Download className="w-5 h-5" />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-black text-gray-900">Add Munchy's to your home screen</span>
+                <span className="block text-sm font-black text-gray-900">{(isIos ? APP_STORE_URL : PLAY_STORE_URL) ? "Download the official Munchy's app" : "Add Munchy's to your home screen"}</span>
                 <span className="block text-xs text-gray-500">Tap here for faster ordering next time</span>
               </span>
             </button>
