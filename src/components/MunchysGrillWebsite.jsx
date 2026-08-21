@@ -801,6 +801,7 @@ const MunchysGrillWebsite = () => {
                 <p>Catering</p>
                 <p>Blog</p>
                 <p>Locations</p>
+                <a href="/privacy.html" className="block hover:text-emerald-400 transition-colors">Privacy Policy</a>
               </div>
             </div>
             <div>
@@ -830,7 +831,7 @@ const MunchysGrillWebsite = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>Copyright © 2025 - Munchy's Grill Burgers. All rights reserved.</p>
+            <p>Copyright © 2026 - Munchy's Grill Burgers. All rights reserved.</p>
           </div>
         </div>
       </footer>
